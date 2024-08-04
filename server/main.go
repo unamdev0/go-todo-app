@@ -2,21 +2,12 @@ package main
 
 import (
 	"fmt"
-	"go-todo-app/routes"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
+	"github.com/unamdev0/go-todo-app/routes"
 )
-
-func init() {
-
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file: %s", err)
-	}
-}
 
 func main() {
 	router := routes.Router()
