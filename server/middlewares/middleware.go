@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -53,27 +54,47 @@ func createDBInstance() {
 }
 
 func GetAllTask(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	payload := getAllTask()
 	json.NewEncoder(w).Encode(payload)
 }
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	if r.Method == "OPTIONS" {
+
+		return
+	}
 	var task *models.ToDoList
 
-	json.NewDecoder(r.Body).Decode(&task)
+	reqBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		fmt.Fprintf(w, "Kindly enter data ")
+	}
+	err = json.Unmarshal(reqBody, &task)
+	if err != nil {
+		fmt.Printf("%s", err.Error())
+	}
 	insertOneTask(task)
 	json.NewEncoder(w).Encode(task)
 
 }
 
 func TaskComplete(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "PUT")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	if r.Method == "OPTIONS" {
+
+		return
+	}
 	params := mux.Vars(r)
 	markTaskAsComplete(params["id"])
 	json.NewEncoder(w).Encode(params["id"])
@@ -81,9 +102,14 @@ func TaskComplete(w http.ResponseWriter, r *http.Request) {
 }
 
 func UndoDelete(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "PUT")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	if r.Method == "OPTIONS" {
 
+		return
+	}
 	params := mux.Vars(r)
 	undoDelete(params["id"])
 	json.NewEncoder(w).Encode(params["id"])
@@ -92,9 +118,14 @@ func UndoDelete(w http.ResponseWriter, r *http.Request) {
 
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	if r.Method == "OPTIONS" {
 
+		return
+	}
 	params := mux.Vars(r)
 	deleteTask(params["id"])
 	json.NewEncoder(w).Encode(params["id"])
@@ -102,9 +133,14 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteAllTask(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	if r.Method == "OPTIONS" {
 
+		return
+	}
 	payload := deleteAllTasks()
 	json.NewEncoder(w).Encode(payload)
 
